@@ -10,3 +10,6 @@
 #setTutorial, #fechar{
     display: none;
 }
+#cardTarefas{
+    display: none;
+}

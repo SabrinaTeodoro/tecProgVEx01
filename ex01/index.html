@@ -12,22 +12,19 @@
 </head>
 <body onload="configMostrarTutorial()">
     <section class="wrapper">
-        <h1>Lista de tarefas</h1>
-        <div>
-            <p id="showTutorial" data-bs-toggle="modal" data-bs-target="#exampleModal">Mostrar tutorial</p>
-        </div>
-        <div>
-            <input type="text" name="" id="inputTarefa" class="form-control" placeholder="Nome da tarefa">
-        </div>
-        <button type="submit" id="btnSalvar" class="btn btn-primary my-2 mx-auto">Salvar</button>
-        <!-- <div id="tarefas">
-           <ul ></ul>
-        </div> -->
-        <div class="card" style="width: 18rem;">
-            <ul id="tarefas" class="list-group list-group-flush">
-              <!-- <li class="list-group-item bg-success text-white">Cras justo odio</li> -->
-            </ul>
-          </div>
+      <h1>Lista de tarefas</h1>
+      <div>
+        <p id="showTutorial" data-bs-toggle="modal" data-bs-target="#exampleModal">Mostrar tutorial</p>
+      </div>
+      <div>
+        <input type="text" name="" id="inputTarefa" class="form-control" placeholder="Nome da tarefa">
+      </div>
+      <button type="submit" id="btnSalvar" class="btn btn-primary my-2 mx-auto">Salvar</button>
+      <div class="card" id="cardTarefas" style="width: 18rem;">
+        <ul id="tarefas" class="list-group list-group-flush">
+          <!-- <li class="list-group-item bg-success text-white">Cras justo odio</li> -->
+        </ul>
+      </div>
     </section>
     <div class="modal" id="exampleModal" tabindex="-1">
         <div class="modal-dialog">

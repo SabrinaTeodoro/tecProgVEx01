@@ -28,7 +28,6 @@ function configMostrarTutorial(){
 }
 function abrirTutorial(){
     //deve carregar a 1 mensagem
-    console.log('abriu modal tutorial');
     const mostra = document.getElementById("showTutorial");
     mostra.click();
 }
@@ -66,7 +65,6 @@ function setMostrarTutorial(){
     let mostraTutorial = JSON.parse(localStorage.getItem("mostrarTutorial"));
     localStorage.setItem("mostrarTutorial", `${!mostraTutorial}`);
     mostraTutorial ? null : marcaInputHtml();
-    console.log(localStorage.getItem("mostrarTutorial"));
 }
 function marcaInputHtml(){
     const campo = document.getElementById("tutorial");
@@ -83,14 +81,12 @@ function addTarefa(){
     
     let novaTarefa = inputTarefa.value.trim();
     if(novaTarefa.length){//se houver comprimento depois de limpo
-        sendToLocalstorage(novaTarefa);
+        sendTarefaToLocalstorage(novaTarefa);
 
         const novoLi = document.createElement("li");
         novoLi.classList.add("list-group-item");
-        /* novoLi.style.marginBottom = "0";
-        novoLi.style.marginTop = "5px"; */
 
-        novoLi.addEventListener("click", marcaConcluido);
+        novoLi.addEventListener("click", setConcluido);
         novoLi.addEventListener("dblclick", excluirTarefa);
 
         novoLi.innerText = novaTarefa;
@@ -102,15 +98,32 @@ function addTarefa(){
     }
     
 }
-
-function sendToLocalstorage(novaTarefa){
+function Tarefa(tarefa){
+    this.tarefa = tarefa;
+    this.concluido = false;
+}
+function getFromLocalstorage(){
     let tarefas = [];//VOLTAR E PASSAR PRA SET INVES DE ARRAY
     if(localStorage.getItem("tarefas")){//se houver
+        
         //pegar SE HOUVER o que ha atual
         let tarefasStr = localStorage.getItem("tarefas");
         //passar pra array
         tarefas = JSON.parse(tarefasStr);
+        if(tarefas.length){
+            let displayCard = document.getElementById("cardTarefas");
+            displayCard.style.display = "block";
+        }else{
+            let displayCard = document.getElementById("cardTarefas");
+            displayCard.style.display = "none";
+        }
     }
+    return tarefas;
+}
+function sendTarefaToLocalstorage(tarefa){
+    let tarefas = getFromLocalstorage();
+
+    let novaTarefa = new Tarefa(tarefa);
     tarefas.push(novaTarefa);
     let tarefasStr = JSON.stringify(tarefas);
     //cria
@@ -121,14 +134,31 @@ function sendToLocalstorage(novaTarefa){
     //mandar de volta pro ls
     //localStorage.setItem("tarefas", novaTarefa);
 }
-function marcaConcluido({target}){
-    console.log('nyo-ho');
-    /* target.innerHTML = `<s>${target.innerHTML}</s>`; */
-    target.classList.add("bg-success", "text-white");
+
+function setConcluido({target}){
+    console.log(target.innerText);
+    const tarefa = target.innerText;
+    //target.innerHTML = `<s>${target.innerHTML}</s>`;
+    //acessa ls
+    const tarefas = getFromLocalstorage();
+    //encontra tarefa e muda "concluido"
+    for(const e of tarefas){
+        if(e.tarefa == tarefa){
+            e.concluido = !e.concluido;
+            if(e.concluido){
+                target.classList.add("bg-success", "text-white");
+            }else{
+                target.classList.remove("bg-success", "text-white");
+            }
+            break;
+        }
+    }
+    //atualiza
+    let tarefasStr = JSON.stringify(tarefas);
+    localStorage.setItem('tarefas', tarefasStr);
 }
 function excluirTarefa({target}){
-    let aExcluir = target.innerText
-    console.log(aExcluir);
+    let aExcluir = target.innerText;
     //remover da lista
     target.remove();
     
@@ -137,26 +167,29 @@ function excluirTarefa({target}){
         //parse
         //filter?
         //devolve pro localstorage
-    if(localStorage.getItem('tarefas')){//se existir
-        let tarefasStr = localStorage.getItem('tarefas');
-        const tarefas = JSON.parse(tarefasStr);
+    const tarefas = getFromLocalstorage();
+    if(tarefas.length){
         let novasTarefas = tarefas.filter(
-            tarefa => tarefa != aExcluir
+            e => e.tarefa != aExcluir
         );
-        console.log(novasTarefas);
+        //atualiza
         tarefasStr = JSON.stringify(novasTarefas);
         localStorage.setItem("tarefas", tarefasStr);
     }
 }
 function carregaTarefas(){
     const pai = document.getElementById("tarefas");
-    let tarefas = JSON.parse(localStorage.getItem("tarefas"));
+    const tarefas = getFromLocalstorage();
+    
     tarefas.forEach(
-        tarefa => {
+        e => {
             const novoLi = document.createElement("li");
             novoLi.classList.add("list-group-item");
-            novoLi.innerText = tarefa;
-            novoLi.addEventListener("click", marcaConcluido);
+            if(e.concluido){
+                novoLi.classList.add("bg-success", "text-white");
+            }
+            novoLi.innerText = e.tarefa;
+            novoLi.addEventListener("click", setConcluido);
             novoLi.addEventListener("dblclick", excluirTarefa);
 
             pai.appendChild(novoLi);
